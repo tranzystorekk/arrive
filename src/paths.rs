@@ -8,5 +8,7 @@ pub fn cache_directory() -> Option<PathBuf> {
 }
 
 pub fn state_directory() -> Option<PathBuf> {
-    dirs::state_dir().map(|path| path.join(BASE_DIR))
+    dirs::state_dir()
+        .or_else(|| dirs::home_dir().map(|p| p.join(".local/state")))
+        .map(|path| path.join(BASE_DIR))
 }
