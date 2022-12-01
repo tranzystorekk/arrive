@@ -41,6 +41,15 @@ fn main() {
     state.save();
 }
 
+fn do_input_cmd(state: &State, args: InputArgs) {
+    let (year, day) = match (args.year, args.day) {
+        (Some(y), Some(d)) => (y, d),
+        _ => (state.year, state.day),
+    };
+
+    web::fetch_input(state, year, day);
+}
+
 fn do_token_show_cmd(state: &State) {
     match &state.session_token {
         Some(token) => println!("{}", token),
