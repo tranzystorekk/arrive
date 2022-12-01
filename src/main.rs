@@ -4,6 +4,9 @@ mod paths;
 mod state;
 mod web;
 
+use std::io::{Read, Write};
+
+use cache::Entry;
 use cli::{Cli, InputArgs, TokenCmd};
 use state::State;
 
@@ -25,7 +28,10 @@ fn main() {
             do_token_show_cmd(&state);
             return;
         }
-        Cli::Input(_) => todo!(),
+        Cli::Input(args) => {
+            do_input_cmd(&state, args);
+            return;
+        }
         Cli::Submit { solution } => todo!(),
         Cli::Select { year, day } => {
             state.year = year;
@@ -48,7 +54,25 @@ fn do_input_cmd(state: &State, args: InputArgs) {
         _ => (state.year, state.day),
     };
 
-    web::fetch_input(state, year, day);
+    if args.force {
+        let contents = web::fetch_input(state, year, day);
+        cache::force_write(year, day, contents.as_bytes());
+        println!("{}", contents);
+        return;
+    }
+
+    match cache::fetch(year, day) {
+        Entry::Cached(mut file) => {
+            let mut buf = String::new();
+            file.read_to_string(&mut buf).unwrap();
+            println!("{}", buf);
+        }
+        Entry::Missing(mut file) => {
+            let contents = web::fetch_input(state, year, day);
+            file.write_all(contents.as_bytes()).unwrap();
+            println!("{}", contents);
+        }
+    }
 }
 
 fn do_token_show_cmd(state: &State) {

@@ -22,9 +22,7 @@ pub fn fetch_input(state: &State, year: u32, day: u32) -> String {
 
     let response = req.send().unwrap();
 
-    eprintln!("{}", response.as_str().unwrap());
-
-    todo!()
+    response.as_str().unwrap().to_string()
 }
 
 pub fn submit(state: &State, solution: &str) {
