@@ -68,6 +68,10 @@ pub enum TokenCmd {
 
 #[derive(Args)]
 pub struct InputArgs {
+    /// Force fetch over the web and cache overwrite
+    #[arg(short, long)]
+    pub force: bool,
+
     /// Year to fetch input for
     #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..))]
     pub year: Option<u32>,
