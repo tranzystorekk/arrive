@@ -70,9 +70,9 @@ pub enum TokenCmd {
 pub struct InputArgs {
     /// Year to fetch input for
     #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..))]
-    year: Option<u32>,
+    pub year: Option<u32>,
 
     /// Day to fetch input for
     #[arg(short, long, value_parser = clap::value_parser!(u32).range(1..25))]
-    day: Option<u32>,
+    pub day: Option<u32>,
 }

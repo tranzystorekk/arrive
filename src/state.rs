@@ -1,4 +1,5 @@
-use std::{fs::File, io::{Read, Write}};
+use std::fs::File;
+use std::io::{Read, Write};
 
 use serde::{Deserialize, Serialize};
 
@@ -47,7 +48,12 @@ impl State {
 
         let state_file = state_dir.join(paths::STATE_FILE);
 
-        let mut f = File::options().read(true).write(true).create(true).open(&state_file).unwrap();
+        let mut f = File::options()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(&state_file)
+            .unwrap();
         let mut s = String::new();
         f.read_to_string(&mut s).unwrap();
 
@@ -63,7 +69,7 @@ impl State {
     pub fn save(&self) {
         let state_dir = paths::state_directory().unwrap();
         std::fs::create_dir_all(&state_dir).unwrap();
-        
+
         let state_file = state_dir.join(paths::STATE_FILE);
 
         std::fs::write(state_file, toml::to_vec(self).unwrap()).unwrap();

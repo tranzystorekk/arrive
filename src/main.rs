@@ -3,7 +3,7 @@ mod paths;
 mod state;
 mod web;
 
-use cli::{Cli, TokenCmd};
+use cli::{Cli, InputArgs, TokenCmd};
 use state::State;
 
 use clap::Parser;
@@ -20,10 +20,10 @@ fn main() {
 
     match cli {
         Cli::Token(TokenCmd::Set { token }) => state.session_token = Some(token),
-        Cli::Token(TokenCmd::Show) => match &state.session_token {
-            Some(token) => println!("{}", token),
-            None => eprintln!("Missing token, did you run `arv token set`?"),
-        },
+        Cli::Token(TokenCmd::Show) => {
+            do_token_show_cmd(&state);
+            return;
+        }
         Cli::Input(_) => todo!(),
         Cli::Submit { solution } => todo!(),
         Cli::Select { year, day } => {
@@ -37,5 +37,13 @@ fn main() {
         Cli::Completion { .. } => unreachable!(),
     }
 
+    // actions that don't return will result in a state dump-to-file here
     state.save();
+}
+
+fn do_token_show_cmd(state: &State) {
+    match &state.session_token {
+        Some(token) => println!("{}", token),
+        None => eprintln!("Missing token, did you run `arv token set`?"),
+    }
 }
