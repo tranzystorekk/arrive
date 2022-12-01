@@ -30,3 +30,13 @@ pub fn fetch(year: u32, day: u32) -> Entry {
         Entry::Missing(f)
     }
 }
+
+pub fn force_write(year: u32, day: u32, contents: &[u8]) {
+    let cache_dir = paths::cache_directory().unwrap();
+    std::fs::create_dir_all(&cache_dir).unwrap();
+
+    let filename = format!("{}_{:02}.txt", year, day);
+    let target_cache = cache_dir.join(filename);
+
+    std::fs::write(target_cache, contents).unwrap();
+}
