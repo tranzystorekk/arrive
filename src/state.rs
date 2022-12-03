@@ -41,6 +41,16 @@ impl Default for State {
     }
 }
 
+impl Stage {
+    pub fn advance(&mut self) {
+        *self = match self {
+            Stage::First => Stage::Second,
+            Stage::Second => Stage::Complete,
+            Stage::Complete => return,
+        }
+    }
+}
+
 impl State {
     pub fn load() -> Self {
         let state_dir = paths::state_directory().unwrap();

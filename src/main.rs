@@ -32,7 +32,9 @@ fn main() {
             do_input_cmd(&state, args);
             return;
         }
-        Cli::Submit { solution } => todo!(),
+        Cli::Submit { solution } => {
+            do_submit(&mut state, solution);
+        }
         Cli::Select { year, day } => {
             state.year = year;
             state.day = day;
@@ -73,6 +75,20 @@ fn do_input_cmd(state: &State, args: InputArgs) {
             println!("{}", contents);
         }
     }
+}
+
+fn do_submit(state: &mut State, solution: Option<String>) {
+    let solution = match solution {
+        Some(solution) => solution,
+        None => {
+            let mut result = String::new();
+            std::io::stdin().read_to_string(&mut result).unwrap();
+
+            result.trim().to_string()
+        }
+    };
+
+    web::submit(state, &solution);
 }
 
 fn do_token_show_cmd(state: &State) {
