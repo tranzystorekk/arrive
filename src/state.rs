@@ -90,9 +90,9 @@ impl State {
 
         for d in &sorted {
             let symbol = match d.stage {
-                Stage::First => "🌑",
-                Stage::Second => "🌓",
-                Stage::Complete => "🌝",
+                Stage::First => "☐☐",
+                Stage::Second => "🗹☐",
+                Stage::Complete => "🗹🗹",
             };
             println!("{}/{:02} {}", d.year, d.day, symbol);
         }
