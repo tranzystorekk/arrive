@@ -3,12 +3,7 @@ use clap_complete::Shell;
 
 pub fn generate_completion(shell: Shell) {
     let cmd = &mut Cli::command();
-    clap_complete::generate(
-        shell,
-        cmd,
-        cmd.get_name().to_string(),
-        &mut std::io::stdout(),
-    );
+    clap_complete::generate(shell, cmd, env!("CARGO_BIN_NAME"), &mut std::io::stdout());
 }
 
 #[derive(Parser)]
