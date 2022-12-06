@@ -3,6 +3,11 @@ name = "arrive"
 version = "0.1.0"
 authors = ["Marcin Puc <tranzystorek.io@protonmail.com>"]
 edition = "2021"
+description = "A simple CLI tool for interacting with Advent of Code"
+repository = "https://github.com/tranzystorek-io/arrive"
+license = "MIT"
+keywords = ["advent", "aoc", "cli", "tool"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
