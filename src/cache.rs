@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::path::PathBuf;
 
 use anyhow::{Context, Result};
 
@@ -8,9 +9,9 @@ pub enum Entry {
     /// A file open for reading that represents a cache hit
     Cached(File),
 
-    /// A file open for writing that represents a cache miss
+    /// A filepath that represents a cache miss
     /// that should be filled in
-    Missing(File),
+    Missing(PathBuf),
 }
 
 pub fn fetch(year: u32, day: u32) -> Result<Entry> {
@@ -32,12 +33,7 @@ pub fn fetch(year: u32, day: u32) -> Result<Entry> {
             .with_context(|| format!("Failed to open cache file: {}", target_cache.display()))?;
         Entry::Cached(f)
     } else {
-        let f = File::options()
-            .create_new(true)
-            .write(true)
-            .open(&target_cache)
-            .with_context(|| format!("Failed to create cache file: {}", target_cache.display()))?;
-        Entry::Missing(f)
+        Entry::Missing(target_cache)
     };
 
     Ok(result)

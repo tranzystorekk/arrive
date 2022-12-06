@@ -4,6 +4,7 @@ mod paths;
 mod state;
 mod web;
 
+use std::fs::File;
 use std::io::{Read, Write};
 
 use anyhow::{Context, Result};
@@ -80,9 +81,15 @@ fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
                 .context("Failed to read cached input file")?;
             print_content(&buf)?;
         }
-        Entry::Missing(mut file) => {
+        Entry::Missing(path) => {
             let contents = web::fetch_input(state, year, day)?;
             print_content(&contents)?;
+
+            let mut file = File::options()
+                .create_new(true)
+                .write(true)
+                .open(&path)
+                .with_context(|| format!("Failed to create cache file: {}", path.display()))?;
             file.write_all(contents.as_bytes())
                 .context("Failed to write input file to cache")?;
         }
