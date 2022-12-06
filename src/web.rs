@@ -3,6 +3,7 @@ use anyhow::{bail, Context, Result};
 use crate::state::{Day, Stage, State};
 
 const AOC_BASE_URL: &str = "https://adventofcode.com";
+const HTTP_OK: i32 = 200;
 
 fn user_agent() -> String {
     let repo = env!("CARGO_PKG_REPOSITORY");
@@ -24,6 +25,12 @@ pub fn fetch_input(state: &State, year: u32, day: u32) -> Result<String> {
         .with_header("User-Agent", user_agent);
 
     let response = req.send().context("Request for input file failed")?;
+
+    if response.status_code != HTTP_OK {
+        eprint!("{}", response.as_str()?);
+        bail!("HTTP {} {}", response.status_code, response.reason_phrase);
+    }
+
     let input = response.as_str()?;
 
     Ok(input.to_string())
@@ -73,6 +80,12 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
     let response = req
         .send()
         .context("Request with solution submission failed")?;
+
+    if response.status_code != HTTP_OK {
+        eprint!("{}", response.as_str()?);
+        bail!("HTTP {} {}", response.status_code, response.reason_phrase);
+    }
+
     let response_body = response.as_str()?;
 
     if response_body.contains("That's the right answer!") {
