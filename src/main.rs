@@ -6,34 +6,35 @@ mod web;
 
 use std::io::{Read, Write};
 
+use anyhow::{Context, Result};
+use clap::Parser;
+
 use cache::Entry;
 use cli::{Cli, InputArgs, TokenCmd};
 use state::State;
 
-use clap::Parser;
-
-fn main() {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     if let Cli::Completion { shell } = cli {
         cli::generate_completion(shell);
-        return;
+        return Ok(());
     }
 
-    let mut state = State::load();
+    let mut state = State::load()?;
 
     match cli {
         Cli::Token(TokenCmd::Set { token }) => state.session_token = Some(token),
         Cli::Token(TokenCmd::Show) => {
-            do_token_show_cmd(&state);
-            return;
+            do_token_show_cmd(&state)?;
+            return Ok(());
         }
         Cli::Input(args) => {
-            do_input_cmd(&state, args);
-            return;
+            do_input_cmd(&state, args)?;
+            return Ok(());
         }
         Cli::Submit { solution } => {
-            do_submit(&mut state, solution);
+            do_submit(&mut state, solution)?;
         }
         Cli::Select { year, day } => {
             state.year = year;
@@ -41,59 +42,70 @@ fn main() {
         }
         Cli::Status => {
             state.print_status();
-            return;
+            return Ok(());
         }
         Cli::Completion { .. } => unreachable!(),
     }
 
     // actions that don't return will result in a state dump-to-file here
-    state.save();
+    state.save()?;
+
+    Ok(())
 }
 
-fn do_input_cmd(state: &State, args: InputArgs) {
+fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
     let (year, day) = match (args.year, args.day) {
         (Some(y), Some(d)) => (y, d),
         _ => (state.year, state.day),
     };
 
     if args.force {
-        let contents = web::fetch_input(state, year, day);
-        cache::force_write(year, day, contents.as_bytes());
+        let contents = web::fetch_input(state, year, day)?;
         println!("{}", contents);
-        return;
+        cache::force_write(year, day, contents.as_bytes())?;
+        return Ok(());
     }
 
-    match cache::fetch(year, day) {
+    match cache::fetch(year, day)? {
         Entry::Cached(mut file) => {
             let mut buf = String::new();
-            file.read_to_string(&mut buf).unwrap();
+            file.read_to_string(&mut buf)
+                .context("Failed to read cached input file")?;
             println!("{}", buf);
         }
         Entry::Missing(mut file) => {
-            let contents = web::fetch_input(state, year, day);
-            file.write_all(contents.as_bytes()).unwrap();
+            let contents = web::fetch_input(state, year, day)?;
             println!("{}", contents);
+            file.write_all(contents.as_bytes())
+                .context("Failed to write input file to cache")?;
         }
     }
+
+    Ok(())
 }
 
-fn do_submit(state: &mut State, solution: Option<String>) {
+fn do_submit(state: &mut State, solution: Option<String>) -> Result<()> {
     let solution = match solution {
         Some(solution) => solution,
         None => {
             let mut result = String::new();
-            std::io::stdin().read_to_string(&mut result).unwrap();
+            std::io::stdin()
+                .read_to_string(&mut result)
+                .context("Failed to read solution from STDIN")?;
 
             result.trim().to_string()
         }
     };
 
-    web::submit(state, &solution);
+    web::submit(state, &solution)?;
+
+    Ok(())
 }
 
-fn do_token_show_cmd(state: &State) {
-    match &state.session_token {
-        Some(token) => println!("{}", token),
-        None => eprintln!("Missing token, did you run `arv token set`?"),
-    }
+fn do_token_show_cmd(state: &State) -> Result<()> {
+    let token = state.session_token()?;
+
+    println!("{}", token);
+
+    Ok(())
 }

@@ -1,3 +1,5 @@
+use anyhow::{bail, Context, Result};
+
 use crate::state::{Day, Stage, State};
 
 const AOC_BASE_URL: &str = "https://adventofcode.com";
@@ -10,25 +12,29 @@ fn user_agent() -> String {
     format!("{}@{} by {}", repo, version, authors)
 }
 
-pub fn fetch_input(state: &State, year: u32, day: u32) -> String {
+pub fn fetch_input(state: &State, year: u32, day: u32) -> Result<String> {
     let url = format!("{}/{}/day/{}/input", AOC_BASE_URL, year, day);
     let user_agent = user_agent();
+    let session_token = state.session_token()?;
 
-    let session_cookie = format!("session={}", state.session_token.as_deref().unwrap());
+    let session_cookie = format!("session={}", session_token);
 
     let req = minreq::get(url)
         .with_header("Cookie", session_cookie)
         .with_header("User-Agent", user_agent);
 
-    let response = req.send().unwrap();
+    let response = req.send().context("Request for input file failed")?;
+    let input = response.as_str()?;
 
-    response.as_str().unwrap().to_string()
+    Ok(input.to_string())
 }
 
-pub fn submit(state: &mut State, solution: &str) {
+pub fn submit(state: &mut State, solution: &str) -> Result<()> {
     let url = format!("{}/{}/day/{}/answer", AOC_BASE_URL, state.year, state.day);
-    let session_cookie = format!("session={}", state.session_token.as_deref().unwrap());
     let user_agent = user_agent();
+    let session_token = state.session_token()?;
+
+    let session_cookie = format!("session={}", session_token);
 
     let maybe_d = state
         .days
@@ -50,13 +56,11 @@ pub fn submit(state: &mut State, solution: &str) {
     let level = match target_day.stage {
         Stage::First => 1,
         Stage::Second => 2,
-        Stage::Complete => {
-            eprintln!(
-                "You have already completed selected day: {}/{:02}",
-                state.year, state.day
-            );
-            return;
-        }
+        Stage::Complete => bail!(
+            "You have already completed selected day: {}/{:02}",
+            state.year,
+            state.day
+        ),
     };
     let form_body = format!("level={}&answer={}", level, solution).into_bytes();
 
@@ -66,12 +70,16 @@ pub fn submit(state: &mut State, solution: &str) {
         .with_header("Content-Type", "application/x-www-form-urlencoded")
         .with_body(form_body);
 
-    let response = req.send().unwrap();
-    let response_body = response.as_str().unwrap();
+    let response = req
+        .send()
+        .context("Request with solution submission failed")?;
+    let response_body = response.as_str()?;
 
     if response_body.contains("That's the right answer!") {
         target_day.stage.advance();
     }
 
     eprintln!("{}", response_body);
+
+    Ok(())
 }

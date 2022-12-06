@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{Read, Write};
 
+use anyhow::{anyhow, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::paths;
@@ -52,9 +53,14 @@ impl Stage {
 }
 
 impl State {
-    pub fn load() -> Self {
-        let state_dir = paths::state_directory().unwrap();
-        std::fs::create_dir_all(&state_dir).unwrap();
+    pub fn load() -> Result<Self> {
+        let state_dir = paths::state_directory()?;
+        std::fs::create_dir_all(&state_dir).with_context(|| {
+            format!(
+                "Failed to create state direcotry structure: {}",
+                state_dir.display()
+            )
+        })?;
 
         let state_file = state_dir.join(paths::STATE_FILE);
 
@@ -63,26 +69,47 @@ impl State {
             .write(true)
             .create(true)
             .open(&state_file)
-            .unwrap();
-        let mut s = String::new();
-        f.read_to_string(&mut s).unwrap();
+            .with_context(|| format!("Failed to open state file: {}", state_file.display()))?;
 
-        if s.is_empty() {
+        let mut s = String::new();
+        f.read_to_string(&mut s)
+            .context("Failed to read state file")?;
+
+        let result = if s.is_empty() {
             let v = Default::default();
-            f.write_all(&toml::to_vec(&v).unwrap()).unwrap();
+            let bytes = toml::to_vec(&v).context("Failed to serialize new default state")?;
+            f.write_all(&bytes)
+                .context("Failed to write new default state to file")?;
             v
         } else {
-            toml::from_str(&s).unwrap()
-        }
+            toml::from_str(&s).context("Failed to deserialize state")?
+        };
+
+        Ok(result)
     }
 
-    pub fn save(&self) {
-        let state_dir = paths::state_directory().unwrap();
-        std::fs::create_dir_all(&state_dir).unwrap();
+    pub fn save(&self) -> Result<()> {
+        let state_dir = paths::state_directory()?;
+        std::fs::create_dir_all(&state_dir).with_context(|| {
+            format!(
+                "Failed to create state directory structure: {}",
+                state_dir.display()
+            )
+        })?;
 
         let state_file = state_dir.join(paths::STATE_FILE);
 
-        std::fs::write(state_file, toml::to_vec(self).unwrap()).unwrap();
+        let bytes = toml::to_vec(self).context("Failed to serialize state")?;
+        std::fs::write(&state_file, bytes)
+            .with_context(|| format!("Failed to write state to file: {}", state_file.display()))?;
+
+        Ok(())
+    }
+
+    pub fn session_token(&self) -> Result<&str> {
+        self.session_token
+            .as_deref()
+            .ok_or_else(|| anyhow!("Missing session token, have you run `arv token set`?"))
     }
 
     pub fn print_status(&self) {
