@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.1.1 - 2022-12-06
+#### Bug Fixes
+- avoid appending an unnecessary newline to input files - (a776bf8) - tranzystorek-io
+#### Documentation
+- add install guide to README - (72c57c8) - tranzystorek-io
+
+- - -
+
 ## v0.1.0 - 2022-12-06
 #### Bug Fixes
 - use correct binary name for completion generation - (4614cf5) - tranzystorek-io
