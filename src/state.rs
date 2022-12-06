@@ -113,8 +113,7 @@ impl State {
     }
 
     pub fn print_status(&self) {
-        println!("year = {}", self.year);
-        println!("day = {}", self.day);
+        println!("selected: {}/{:02}", self.year, self.day);
 
         if self.days.is_empty() {
             return;
