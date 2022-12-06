@@ -1,5 +1,7 @@
 # Arrive
 
+[![Crates.io](https://img.shields.io/crates/v/arrive?style=flat-square)](https://crates.io/crates/arrive)
+
 ## About
 
 A simple tool to fetch your Advent of Code input and submit your solutions.
