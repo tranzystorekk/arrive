@@ -4,6 +4,21 @@
 
 A simple tool to fetch your Advent of Code input and submit your solutions.
 
+## Install
+
+Via Cargo:
+
+```console
+cargo install --locked arrive
+```
+
+From source:
+
+```console
+git clone https://github.com/tranzystorek-io/arrive.git
+cargo install --path arrive
+```
+
 ## Usage
 
 Set a new session token (see [Token](#token) section):
