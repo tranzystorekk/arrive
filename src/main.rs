@@ -53,6 +53,13 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+fn print_content(content: &str) -> Result<()> {
+    print!("{}", content);
+    std::io::stdout().flush()?;
+
+    Ok(())
+}
+
 fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
     let (year, day) = match (args.year, args.day) {
         (Some(y), Some(d)) => (y, d),
@@ -61,7 +68,7 @@ fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
 
     if args.force {
         let contents = web::fetch_input(state, year, day)?;
-        println!("{}", contents);
+        print_content(&contents)?;
         cache::force_write(year, day, contents.as_bytes())?;
         return Ok(());
     }
@@ -71,11 +78,11 @@ fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
             let mut buf = String::new();
             file.read_to_string(&mut buf)
                 .context("Failed to read cached input file")?;
-            println!("{}", buf);
+            print_content(&buf)?;
         }
         Entry::Missing(mut file) => {
             let contents = web::fetch_input(state, year, day)?;
-            println!("{}", contents);
+            print_content(&contents)?;
             file.write_all(contents.as_bytes())
                 .context("Failed to write input file to cache")?;
         }
