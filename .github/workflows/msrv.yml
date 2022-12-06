@@ -1,0 +1,22 @@
+name: check_msrv
+on:
+  push:
+
+jobs:
+  check-msrv:
+    name: Check MSRV
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Install cargo-msrv
+        uses: taiki-e/install-action@v1
+        with:
+          tool: cargo-msrv
+
+      - name: Run `cargo msrv`
+        run: cargo msrv --output-format json
