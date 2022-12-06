@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.1.2 - 2022-12-06
+#### Bug Fixes
+- avoid preemptively creating cache file in case of a miss - (db82cfa) - tranzystorek-io
+- properly handle HTTP status codes - (5c59120) - tranzystorek-io
+#### Miscellaneous Chores
+- add github release badge to README - (7fa396f) - tranzystorek-io
+- add crates.io badge to README - (129fed4) - tranzystorek-io
+
+- - -
+
 ## v0.1.1 - 2022-12-06
 #### Bug Fixes
 - avoid appending an unnecessary newline to input files - (a776bf8) - tranzystorek-io
