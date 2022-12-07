@@ -7,6 +7,19 @@
 
 A simple tool to fetch your Advent of Code input and submit your solutions.
 
+Key features and goals:
+
+- keeps your current AOC day selection and solution status in a TOML state file (for human readability)
+- caches input files to ease load on AOC servers
+- reasonably minimal dependencies
+
+Directories used (see [dirs](https://docs.rs/dirs/latest/dirs/index.html) for more info):
+
+|Description|Path                                                       |
+|-----------|-----------------------------------------------------------|
+|Cache      |`${XDG_CACHE_HOME}/arrive` or `${HOME}/.cache/arrive`      |
+|State      |`${XDG_STATE_HOME}/arrive` or `${HOME}/.local/state/arrive`|
+
 ## Install
 
 Via Cargo:
