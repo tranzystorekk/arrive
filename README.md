@@ -67,6 +67,12 @@ Print input for current selection:
 arv input
 ```
 
+Save input to file:
+
+```console
+arv input > path/to/file.txt
+```
+
 Submit advent solution for current selection.
 If `<solution>` is omitted, STDIN is read instead.
 
