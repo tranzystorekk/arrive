@@ -1,4 +1,4 @@
-use clap::{Args, CommandFactory, Parser, Subcommand};
+use clap::{ArgGroup, Args, CommandFactory, Parser, Subcommand};
 use clap_complete::Shell;
 
 pub fn generate_completion(shell: Shell) {
@@ -29,14 +29,19 @@ pub enum Cli {
     },
 
     /// Select advent day
+    #[command(group(ArgGroup::new("selection").multiple(true).required(true)))]
     Select {
         /// Year to select
-        #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..))]
-        year: u32,
+        ///
+        /// If supplied, requires --day as well. Otherwise, previously selected year is assumed.
+        #[arg(group = "selection")]
+        #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..), requires = "select_day")]
+        year: Option<u32>,
 
         /// Day to select
-        #[arg(short, long, value_parser = clap::value_parser!(u32).range(1..=25))]
-        day: u32,
+        #[arg(group = "selection")]
+        #[arg(id = "select_day", short = 'd', long = "day", value_name = "DAY", value_parser = clap::value_parser!(u32).range(1..=25))]
+        day: Option<u32>,
     },
 
     /// Show current selection, solution status etc.
@@ -68,10 +73,12 @@ pub struct InputArgs {
     pub force: bool,
 
     /// Year to fetch input for
-    #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..))]
+    ///
+    /// If supplied, requires --day as well. Otherwise, currently selected year is assumed.
+    #[arg(short, long, value_parser = clap::value_parser!(u32).range(2015..), requires = "input_day")]
     pub year: Option<u32>,
 
     /// Day to fetch input for
-    #[arg(short, long, value_parser = clap::value_parser!(u32).range(1..25))]
+    #[arg(id = "input_day", short = 'd', long = "day", value_name = "DAY", value_parser = clap::value_parser!(u32).range(1..25))]
     pub day: Option<u32>,
 }

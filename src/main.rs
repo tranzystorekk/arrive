@@ -38,8 +38,12 @@ fn main() -> Result<()> {
             do_submit(&mut state, solution)?;
         }
         Cli::Select { year, day } => {
-            state.year = year;
-            state.day = day;
+            if let Some(year) = year {
+                state.year = year;
+            }
+            if let Some(day) = day {
+                state.day = day;
+            }
         }
         Cli::Status => {
             state.print_status();
@@ -64,6 +68,7 @@ fn print_content(content: &str) -> Result<()> {
 fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
     let (year, day) = match (args.year, args.day) {
         (Some(y), Some(d)) => (y, d),
+        (None, Some(d)) => (state.year, d),
         _ => (state.year, state.day),
     };
 
