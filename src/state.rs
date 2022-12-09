@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{Read, Write};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::paths;
@@ -82,7 +82,9 @@ impl State {
                 .context("Failed to write new default state to file")?;
             v
         } else {
-            toml::from_str(&s).context("Failed to deserialize state")?
+            let v: Self = toml::from_str(&s).context("Failed to deserialize state")?;
+            v.validate()?;
+            v
         };
 
         Ok(result)
@@ -132,5 +134,27 @@ impl State {
             };
             println!("{}/{:02} {}", d.year, d.day, symbol);
         }
+    }
+
+    fn validate(&self) -> Result<()> {
+        if !(2015..).contains(&self.year) {
+            bail!("Invalid year selected: {}", self.year);
+        }
+
+        if !(1..=25).contains(&self.day) {
+            bail!("Invalid day selected: {}", self.day);
+        }
+
+        for d in &self.days {
+            if !(2015..).contains(&d.year) {
+                bail!("Invalid solution state year: {}", d.year);
+            }
+
+            if !(1..=25).contains(&d.day) {
+                bail!("Invalid solution state day: {}", d.day);
+            }
+        }
+
+        Ok(())
     }
 }
