@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.2.0 - 2022-12-09
+#### Documentation
+- show how to save input to file in Usage - (568c4c9) - tranzystorek-io
+- add more info to About section in README - (d9e7243) - tranzystorek-io
+#### Features
+- **(cli)** fine-tune how --year and --day flags can be used - (92d168e) - *tranzystorek-io*
+- validate state when deserializing - (fb47152) - tranzystorek-io
+
+- - -
+
 ## v0.1.2 - 2022-12-06
 #### Bug Fixes
 - avoid preemptively creating cache file in case of a miss - (db82cfa) - tranzystorek-io
