@@ -77,8 +77,9 @@ impl State {
 
         let result = if s.is_empty() {
             let v = Default::default();
-            let bytes = toml::to_vec(&v).context("Failed to serialize new default state")?;
-            f.write_all(&bytes)
+            let serialized =
+                toml::to_string(&v).context("Failed to serialize new default state")?;
+            f.write_all(serialized.as_bytes())
                 .context("Failed to write new default state to file")?;
             v
         } else {
@@ -101,8 +102,8 @@ impl State {
 
         let state_file = state_dir.join(paths::STATE_FILE);
 
-        let bytes = toml::to_vec(self).context("Failed to serialize state")?;
-        std::fs::write(&state_file, bytes)
+        let serialized = toml::to_string(self).context("Failed to serialize state")?;
+        std::fs::write(&state_file, serialized)
             .with_context(|| format!("Failed to write state to file: {}", state_file.display()))?;
 
         Ok(())
