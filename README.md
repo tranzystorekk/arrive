@@ -1,7 +1,7 @@
 # Arrive
 
 [![GitHub release (latest SemVer)](https://badgers.space/github/release/tranzystorek-io/arrive)](https://github.com/tranzystorek-io/arrive/releases/latest)
-[![Crates.io](https://badgers.space/crates/version/arrive)](https://crates.io/crates/arrive)
+[![Crates.io](https://badgers.space/crates/version/arrive?icon=feather-package)](https://crates.io/crates/arrive)
 
 ## About
 
