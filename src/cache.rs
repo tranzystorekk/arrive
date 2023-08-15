@@ -26,17 +26,16 @@ pub fn fetch(year: u32, day: u32) -> Result<Entry> {
     let filename = format!("{}_{:02}.txt", year, day);
     let target_cache = cache_dir.join(filename);
 
-    let result = if target_cache.exists() {
-        let f = File::options()
-            .read(true)
-            .open(&target_cache)
-            .with_context(|| format!("Failed to open cache file: {}", target_cache.display()))?;
-        Entry::Cached(f)
-    } else {
-        Entry::Missing(target_cache)
-    };
+    if !target_cache.exists() {
+        return Ok(Entry::Missing(target_cache));
+    }
 
-    Ok(result)
+    let file_hit = File::options()
+        .read(true)
+        .open(&target_cache)
+        .with_context(|| format!("Failed to open cache file: {}", target_cache.display()))?;
+
+    Ok(Entry::Cached(file_hit))
 }
 
 pub fn force_write(year: u32, day: u32, contents: &[u8]) -> Result<()> {
