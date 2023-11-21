@@ -21,10 +21,10 @@ jobs:
       - name: Install cocogitto
         uses: taiki-e/install-action@v1
         with:
-          tool: cocogitto@5.2.0
+          tool: git-cliff@1.4.0
 
       - name: Generate changelog
-        run: cog changelog --template full_hash --at ${{ steps.get_version.outputs.VERSION }} > ${{ github.workflow }}_changelog.md
+        run: git cliff --current --strip=all > ${{ github.workflow }}_changelog.md
 
       - name: Create release
         uses: softprops/action-gh-release@v1
