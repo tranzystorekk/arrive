@@ -1,6 +1,6 @@
 # Arrive
 
-[![GitHub release (latest SemVer)](https://badgers.space/github/release/tranzystorek-io/arrive)](https://github.com/tranzystorek-io/arrive/releases/latest)
+[![GitHub release (latest SemVer)](https://badgers.space/github/release/tranzystorekk/arrive)](https://github.com/tranzystorekk/arrive/releases/latest)
 [![Crates.io](https://badgers.space/crates/version/arrive?icon=feather-package)](https://crates.io/crates/arrive)
 
 ## About
@@ -31,7 +31,7 @@ cargo install --locked arrive
 From source:
 
 ```console
-git clone https://github.com/tranzystorek-io/arrive.git
+git clone https://github.com/tranzystorekk/arrive.git
 cargo install --path arrive
 ```
 
