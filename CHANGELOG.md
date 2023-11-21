@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2023-11-21
+
+### Features
+
+- print status stars as ascii with (optional) coloring (6f6ac9b)
+
+### Miscellaneous Tasks
+
+- update repo links (e608980)
+
 ## [0.2.1] - 2023-11-21
 
 ### Documentation
