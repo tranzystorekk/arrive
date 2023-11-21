@@ -3,6 +3,7 @@ use std::io::{Read, Write};
 
 use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
+use yansi::Paint;
 
 use crate::paths;
 
@@ -129,9 +130,13 @@ impl State {
 
         for d in &sorted {
             let symbol = match d.stage {
-                Stage::First => "☐☐",
-                Stage::Second => "🗹☐",
-                Stage::Complete => "🗹🗹",
+                Stage::First => "__".to_string(),
+                Stage::Second => format!("{}_", "*".bold().bright_white()),
+                Stage::Complete => format!(
+                    "{}{}",
+                    "*".bold().bright_white(),
+                    "*".bold().bright_yellow()
+                ),
             };
             println!("{}/{:02} {}", d.year, d.day, symbol);
         }

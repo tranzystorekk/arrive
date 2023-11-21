@@ -9,6 +9,7 @@ use std::io::{Read, Write};
 
 use anyhow::{Context, Result};
 use clap::Parser;
+use yansi::Condition;
 
 use cache::Entry;
 use cli::{Cli, InputArgs, TokenCmd};
@@ -22,6 +23,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    yansi::whenever(Condition::TTY_AND_COLOR);
     let mut state = State::load()?;
 
     match cli {
