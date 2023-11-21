@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2023-11-21
+
+### Documentation
+
+- add icon to crates.io badge (fe21cc0)
+- switch README badges to spacebadgers (0119cde)
+
+### Miscellaneous Tasks
+
+- bump dependencies (2b769d9)
+- use git-cliff in release CI (e570490)
+- add release justfile (8eb0638)
+- replace cocogitto config with git-cliff (0e02078)
+- add basic CI workflow (a47981f)
+- rename LICENSE.md to LICENSE (ac1e9b8)
+
+### Refactor
+
+- switch to early return in fetch (ea66c01)
+
 ## [0.2.0] - 2022-12-09
 
 ### Documentation
