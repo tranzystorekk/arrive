@@ -24,7 +24,7 @@ pub enum Cli {
     Submit {
         /// Solution string to be submitted.
         ///
-        /// If omitted, read from STDOUT instead.
+        /// If omitted, read from STDIN instead.
         solution: Option<String>,
     },
 
