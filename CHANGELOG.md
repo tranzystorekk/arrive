@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2024-11-22
+
+### Documentation
+
+- **cli**: correctly say that input is captured from stdin (d411fd9)
+
+### Miscellaneous Tasks
+
+- **deps**: bump dependencies en masse (4864712)
+- **deps**: bump yansi dependency to 1.0 (cfb2863)
+- update git-cliff used in CI to 2.7 (25589aa)
+
+### Refactor
+
+- replace anyhow dependency with eyre (eaa79e7)
+
+### Styling
+
+- **clippy**: explicitly set truncate to false when loading state file (ff4e907)
+
 ## [0.3.0] - 2023-11-21
 
 ### Features
