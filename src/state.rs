@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{Read, Write};
 
-use anyhow::{anyhow, bail, Context, Result};
+use eyre::{ensure, OptionExt, Result, WrapErr};
 use serde::{Deserialize, Serialize};
 use yansi::Paint;
 
@@ -56,7 +56,7 @@ impl Stage {
 impl State {
     pub fn load() -> Result<Self> {
         let state_dir = paths::state_directory()?;
-        std::fs::create_dir_all(&state_dir).with_context(|| {
+        std::fs::create_dir_all(&state_dir).wrap_err_with(|| {
             format!(
                 "Failed to create state direcotry structure: {}",
                 state_dir.display()
@@ -70,21 +70,21 @@ impl State {
             .write(true)
             .create(true)
             .open(&state_file)
-            .with_context(|| format!("Failed to open state file: {}", state_file.display()))?;
+            .wrap_err_with(|| format!("Failed to open state file: {}", state_file.display()))?;
 
         let mut s = String::new();
         f.read_to_string(&mut s)
-            .context("Failed to read state file")?;
+            .wrap_err("Failed to read state file")?;
 
         let result = if s.is_empty() {
             let v = Default::default();
             let serialized =
-                toml::to_string(&v).context("Failed to serialize new default state")?;
+                toml::to_string(&v).wrap_err("Failed to serialize new default state")?;
             f.write_all(serialized.as_bytes())
-                .context("Failed to write new default state to file")?;
+                .wrap_err("Failed to write new default state to file")?;
             v
         } else {
-            let v: Self = toml::from_str(&s).context("Failed to deserialize state")?;
+            let v: Self = toml::from_str(&s).wrap_err("Failed to deserialize state")?;
             v.validate()?;
             v
         };
@@ -94,7 +94,7 @@ impl State {
 
     pub fn save(&self) -> Result<()> {
         let state_dir = paths::state_directory()?;
-        std::fs::create_dir_all(&state_dir).with_context(|| {
+        std::fs::create_dir_all(&state_dir).wrap_err_with(|| {
             format!(
                 "Failed to create state directory structure: {}",
                 state_dir.display()
@@ -103,9 +103,9 @@ impl State {
 
         let state_file = state_dir.join(paths::STATE_FILE);
 
-        let serialized = toml::to_string(self).context("Failed to serialize state")?;
+        let serialized = toml::to_string(self).wrap_err("Failed to serialize state")?;
         std::fs::write(&state_file, serialized)
-            .with_context(|| format!("Failed to write state to file: {}", state_file.display()))?;
+            .wrap_err_with(|| format!("Failed to write state to file: {}", state_file.display()))?;
 
         Ok(())
     }
@@ -113,7 +113,7 @@ impl State {
     pub fn session_token(&self) -> Result<&str> {
         self.session_token
             .as_deref()
-            .ok_or_else(|| anyhow!("Missing session token, have you run `arv token set`?"))
+            .ok_or_eyre("Missing session token, have you run `arv token set`?")
     }
 
     pub fn print_status(&self) {
@@ -143,22 +143,28 @@ impl State {
     }
 
     fn validate(&self) -> Result<()> {
-        if !(2015..).contains(&self.year) {
-            bail!("Invalid year selected: {}", self.year);
-        }
-
-        if !(1..=25).contains(&self.day) {
-            bail!("Invalid day selected: {}", self.day);
-        }
+        ensure!(
+            (2015..).contains(&self.year),
+            "Invalid year selected: {}",
+            self.year
+        );
+        ensure!(
+            (1..=25).contains(&self.day),
+            "Invalid day selected: {}",
+            self.day
+        );
 
         for d in &self.days {
-            if !(2015..).contains(&d.year) {
-                bail!("Invalid solution state year: {}", d.year);
-            }
-
-            if !(1..=25).contains(&d.day) {
-                bail!("Invalid solution state day: {}", d.day);
-            }
+            ensure!(
+                (2015..).contains(&d.year),
+                "Invalid solution state year: {}",
+                d.year
+            );
+            ensure!(
+                (1..=25).contains(&d.day),
+                "Invalid solution state day: {}",
+                d.day
+            );
         }
 
         Ok(())

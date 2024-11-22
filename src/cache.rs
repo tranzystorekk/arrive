@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::path::PathBuf;
 
-use anyhow::{Context, Result};
+use eyre::{Result, WrapErr};
 
 use crate::paths;
 
@@ -16,7 +16,7 @@ pub enum Entry {
 
 pub fn fetch(year: u32, day: u32) -> Result<Entry> {
     let cache_dir = paths::cache_directory()?;
-    std::fs::create_dir_all(&cache_dir).with_context(|| {
+    std::fs::create_dir_all(&cache_dir).wrap_err_with(|| {
         format!(
             "Failed to create cache directory structure: {}",
             cache_dir.display()
@@ -33,14 +33,14 @@ pub fn fetch(year: u32, day: u32) -> Result<Entry> {
     let file_hit = File::options()
         .read(true)
         .open(&target_cache)
-        .with_context(|| format!("Failed to open cache file: {}", target_cache.display()))?;
+        .wrap_err_with(|| format!("Failed to open cache file: {}", target_cache.display()))?;
 
     Ok(Entry::Cached(file_hit))
 }
 
 pub fn force_write(year: u32, day: u32, contents: &[u8]) -> Result<()> {
     let cache_dir = paths::cache_directory()?;
-    std::fs::create_dir_all(&cache_dir).with_context(|| {
+    std::fs::create_dir_all(&cache_dir).wrap_err_with(|| {
         format!(
             "Failed to create cache directory structure: {}",
             cache_dir.display()
@@ -50,7 +50,7 @@ pub fn force_write(year: u32, day: u32, contents: &[u8]) -> Result<()> {
     let filename = format!("{}_{:02}.txt", year, day);
     let target_cache = cache_dir.join(filename);
 
-    std::fs::write(target_cache, contents).context("Failed to write input file to cache")?;
+    std::fs::write(target_cache, contents).wrap_err("Failed to write input file to cache")?;
 
     Ok(())
 }

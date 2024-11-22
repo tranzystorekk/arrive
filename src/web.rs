@@ -1,4 +1,4 @@
-use anyhow::{bail, Context, Result};
+use eyre::{bail, Result, WrapErr};
 
 use crate::state::{Day, Stage, State};
 
@@ -24,7 +24,7 @@ pub fn fetch_input(state: &State, year: u32, day: u32) -> Result<String> {
         .with_header("Cookie", session_cookie)
         .with_header("User-Agent", user_agent);
 
-    let response = req.send().context("Request for input file failed")?;
+    let response = req.send().wrap_err("Request for input file failed")?;
 
     if response.status_code != HTTP_OK {
         eprint!("{}", response.as_str()?);
@@ -79,7 +79,7 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
 
     let response = req
         .send()
-        .context("Request with solution submission failed")?;
+        .wrap_err("Request with solution submission failed")?;
 
     if response.status_code != HTTP_OK {
         eprint!("{}", response.as_str()?);

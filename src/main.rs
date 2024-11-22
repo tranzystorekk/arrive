@@ -7,8 +7,8 @@ mod web;
 use std::fs::File;
 use std::io::{Read, Write};
 
-use anyhow::{Context, Result};
 use clap::Parser;
+use eyre::{Result, WrapErr};
 use yansi::Condition;
 
 use cache::Entry;
@@ -85,7 +85,7 @@ fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
         Entry::Cached(mut file) => {
             let mut buf = String::new();
             file.read_to_string(&mut buf)
-                .context("Failed to read cached input file")?;
+                .wrap_err("Failed to read cached input file")?;
             print_content(&buf)?;
         }
         Entry::Missing(path) => {
@@ -96,9 +96,9 @@ fn do_input_cmd(state: &State, args: InputArgs) -> Result<()> {
                 .create_new(true)
                 .write(true)
                 .open(&path)
-                .with_context(|| format!("Failed to create cache file: {}", path.display()))?;
+                .wrap_err_with(|| format!("Failed to create cache file: {}", path.display()))?;
             file.write_all(contents.as_bytes())
-                .context("Failed to write input file to cache")?;
+                .wrap_err("Failed to write input file to cache")?;
         }
     }
 
@@ -112,7 +112,7 @@ fn do_submit(state: &mut State, solution: Option<String>) -> Result<()> {
             let mut result = String::new();
             std::io::stdin()
                 .read_to_string(&mut result)
-                .context("Failed to read solution from STDIN")?;
+                .wrap_err("Failed to read solution from STDIN")?;
 
             result.trim().to_string()
         }
