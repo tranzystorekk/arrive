@@ -69,6 +69,7 @@ impl State {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(false)
             .open(&state_file)
             .wrap_err_with(|| format!("Failed to open state file: {}", state_file.display()))?;
 
