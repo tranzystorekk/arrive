@@ -18,10 +18,10 @@ jobs:
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-      - name: Install cocogitto
+      - name: Install git-cliff
         uses: taiki-e/install-action@v1
         with:
-          tool: git-cliff@1.4.0
+          tool: git-cliff@2.7
 
       - name: Generate changelog
         run: git cliff --current --strip=all > ${{ github.workflow }}_changelog.md
