@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - 2024-12-13
+
+### Documentation
+
+- **README**: add Arch Linux installation instructions (9d3790b)
+
+### Miscellaneous Tasks
+
+- **build**: generate shell completion scripts via build script (fca75cf)
+- update various CI actions (0f756b1)
+
 ## [0.3.1] - 2024-11-22
 
 ### Documentation
