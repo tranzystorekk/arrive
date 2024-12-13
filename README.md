@@ -20,7 +20,15 @@ Directories used (see [dirs](https://docs.rs/dirs/latest/dirs/index.html) for mo
 |Cache      |`${XDG_CACHE_HOME}/arrive` or `${HOME}/.cache/arrive`      |
 |State      |`${XDG_STATE_HOME}/arrive` or `${HOME}/.local/state/arrive`|
 
-## Install
+## Installation
+
+Arch Linux:
+
+Arrive is available on the AUR as [arv](https://aur.archlinux.org/packages/arv). You can install it with your preferred AUR helper. Example:
+
+```console
+paru -S arv
+```
 
 Via Cargo:
 
