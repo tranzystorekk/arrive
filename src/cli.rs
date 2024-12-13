@@ -1,10 +1,5 @@
-use clap::{ArgGroup, Args, CommandFactory, Parser, Subcommand};
+use clap::{ArgGroup, Args, Parser, Subcommand};
 use clap_complete::Shell;
-
-pub fn generate_completion(shell: Shell) {
-    let cmd = &mut Cli::command();
-    clap_complete::generate(shell, cmd, env!("CARGO_BIN_NAME"), &mut std::io::stdout());
-}
 
 #[derive(Parser)]
 #[command(version)]

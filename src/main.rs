@@ -8,6 +8,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 
 use clap::Parser;
+use clap_complete::Shell;
 use eyre::{Result, WrapErr};
 use yansi::Condition;
 
@@ -19,7 +20,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     if let Cli::Completion { shell } = cli {
-        cli::generate_completion(shell);
+        generate_completion(shell);
         return Ok(());
     }
 
@@ -129,4 +130,10 @@ fn do_token_show_cmd(state: &State) -> Result<()> {
     println!("{}", token);
 
     Ok(())
+}
+
+pub fn generate_completion(shell: Shell) {
+    use clap::CommandFactory;
+    let cmd = &mut Cli::command();
+    clap_complete::generate(shell, cmd, env!("CARGO_BIN_NAME"), &mut std::io::stdout());
 }
