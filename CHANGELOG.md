@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2024-12-14
+
+### Features
+
+- **submit**: parse the response body instead of displaying raw HTML (b016a42)
+
+### Refactor
+
+- **submit**: don't rely on response body being newline-terminated (7581ff8)
+
 ## [0.3.2] - 2024-12-13
 
 ### Documentation
