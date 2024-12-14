@@ -1,4 +1,5 @@
-use eyre::{bail, Result, WrapErr};
+use eyre::{bail, eyre, Result, WrapErr};
+use tl::{parse, ParserOptions};
 
 use crate::state::{Day, Stage, State};
 
@@ -92,23 +93,62 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
         target_day.stage.advance();
     }
 
-    let start = "<main>";
-    let end = "</main>";
-
-    if let (Some(start_idx), Some(end_idx)) = (response_body.find(start), response_body.find(end)) {
-        if start_idx < end_idx {
-            let start_idx = start_idx + start.len();
-            let content = response_body[start_idx..end_idx]
-                .replace("href=\"/", &format!("href=\"{}/", AOC_BASE_URL));
-            println!(
-                "{}",
-                html2text::from_read(content.as_bytes(), content.len())?
-            );
-        } else {
-            println!("{}", response_body);
-        }
-    } else {
-        println!("{}", response_body);
+    match display_response(response_body) {
+        Ok(_) => {}
+        Err(_) => eprintln!("{}", response_body),
     }
+
+    Ok(())
+}
+
+fn display_response(response_body: &str) -> Result<()> {
+    let dom = parse(response_body, ParserOptions::default())?;
+    let parser = dom.parser();
+
+    let main_tag = dom
+        .nodes()
+        .iter()
+        .find_map(|node| node.as_tag().filter(|tag| tag.name() == "main"))
+        .ok_or_else(|| eyre!("No 'main' tag found"))?;
+
+    let mut links = Vec::new();
+    let mut text = main_tag.inner_text(parser);
+
+    if let Some(anchor_nodes) = main_tag.query_selector(parser, "a[href]") {
+        for (i, anchor) in anchor_nodes.enumerate() {
+            if let Some(element) = anchor.get(parser).and_then(|node| node.as_tag()) {
+                if let (Some(href), link_text) = (
+                    element.attributes().get("href").flatten(),
+                    element.inner_text(parser),
+                ) {
+                    if !link_text.is_empty() {
+                        links.push((href.as_utf8_str(), link_text.to_string()));
+                        text = text
+                            .replace(&*link_text, &format!("{} [{}]", link_text, i + 1))
+                            .into();
+                    }
+                }
+            }
+        }
+    }
+
+    if !text.ends_with('\n') {
+        eprintln!("{}\n", text);
+    } else {
+        eprintln!("{}", text);
+    }
+
+    for (i, (href, _)) in links.iter().enumerate() {
+        eprintln!(
+            "[{}]: {}",
+            i + 1,
+            if href.starts_with("http") {
+                href.to_string()
+            } else {
+                format!("{}{}", AOC_BASE_URL, href)
+            }
+        );
+    }
+
     Ok(())
 }

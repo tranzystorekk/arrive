@@ -20,9 +20,9 @@ clap = { version = "4.5", features = ["derive"] }
 clap_complete = "4.5"
 dirs = "5.0"
 eyre = "0.6"
-html2text = "0.13.5"
 minreq = { version = "2.12", features = ["https"] }
 serde = { version = "1.0", features = ["derive"] }
+tl = "0.7.8"
 toml = "0.8"
 yansi = { version = "1.0", features = ["detect-env", "detect-tty"] }
 
