@@ -138,7 +138,7 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
         .wrap_err("Request with solution submission failed")?;
 
     if response.status_code != HTTP_OK {
-        eprint!("{}", response.as_str()?);
+        eprintln!("{}", response.as_str()?.trim());
         bail!("HTTP {} {}", response.status_code, response.reason_phrase);
     }
 
