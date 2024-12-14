@@ -92,7 +92,23 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
         target_day.stage.advance();
     }
 
-    eprintln!("{}", response_body);
+    let start = "<main>";
+    let end = "</main>";
 
+    if let (Some(start_idx), Some(end_idx)) = (response_body.find(start), response_body.find(end)) {
+        if start_idx < end_idx {
+            let start_idx = start_idx + start.len();
+            let content = response_body[start_idx..end_idx]
+                .replace("href=\"/", &format!("href=\"{}/", AOC_BASE_URL));
+            println!(
+                "{}",
+                html2text::from_read(content.as_bytes(), content.len())?
+            );
+        } else {
+            println!("{}", response_body);
+        }
+    } else {
+        println!("{}", response_body);
+    }
     Ok(())
 }
