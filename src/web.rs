@@ -1,4 +1,7 @@
-use eyre::{bail, Result, WrapErr};
+use std::fmt::Write;
+
+use eyre::{bail, OptionExt, Result, WrapErr};
+use tl::{parse, ParserOptions};
 
 use crate::state::{Day, Stage, State};
 
@@ -11,6 +14,59 @@ fn user_agent() -> String {
     let authors = env!("CARGO_PKG_AUTHORS");
 
     format!("{}@{} by {}", repo, version, authors)
+}
+
+fn parse_response(response_body: &str) -> Result<String> {
+    let dom = parse(response_body, ParserOptions::default())?;
+    let parser = dom.parser();
+
+    let main_tag = dom
+        .nodes()
+        .iter()
+        .filter_map(|node| node.as_tag())
+        .find(|tag| tag.name() == "main")
+        .ok_or_eyre("No <main> tag found")?;
+
+    let mut text = main_tag.inner_text(parser).to_string();
+    let links: Vec<_> = main_tag
+        .query_selector(parser, "a[href]")
+        .map(|anchor_nodes| {
+            anchor_nodes
+                .filter_map(|anchor| anchor.get(parser).and_then(|node| node.as_tag()))
+                .filter_map(|element| {
+                    element
+                        .attributes()
+                        .get("href")
+                        .flatten()
+                        .map(|href| (href.as_utf8_str(), element.inner_text(parser).to_string()))
+                        .filter(|(_, text)| !text.is_empty())
+                })
+        })
+        .into_iter()
+        .flatten()
+        .collect();
+
+    for (i, (_, link_text)) in links.iter().enumerate() {
+        let replaced = format!("({})[{}]", link_text, i + 1);
+        text = text.replace(link_text, &replaced);
+    }
+
+    let mut output = String::new();
+
+    writeln!(&mut output, "{}", text.trim())?;
+    writeln!(&mut output)?;
+
+    for (i, (href, _)) in links.iter().enumerate() {
+        let link = if href.starts_with("http") {
+            href.to_string()
+        } else {
+            format!("{}{}", AOC_BASE_URL, href)
+        };
+
+        writeln!(&mut output, "[{}]: {}", i + 1, link)?;
+    }
+
+    Ok(output)
 }
 
 pub fn fetch_input(state: &State, year: u32, day: u32) -> Result<String> {
@@ -92,7 +148,19 @@ pub fn submit(state: &mut State, solution: &str) -> Result<()> {
         target_day.stage.advance();
     }
 
-    eprintln!("{}", response_body);
+    match parse_response(response_body) {
+        Ok(message) => eprint!("{}", message),
+        Err(report) => {
+            eprintln!("Failed to parse response with error:");
+            eprintln!("------------------------------------");
+            eprintln!("{:?}", report);
+            eprintln!("------------------------------------");
+            eprintln!();
+            eprintln!("Falling back to raw response below");
+            eprintln!();
+            eprintln!("{}", response_body.trim());
+        }
+    }
 
     Ok(())
 }

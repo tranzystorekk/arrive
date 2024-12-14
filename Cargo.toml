@@ -22,6 +22,7 @@ dirs = "5.0"
 eyre = "0.6"
 minreq = { version = "2.12", features = ["https"] }
 serde = { version = "1.0", features = ["derive"] }
+tl = "0.7"
 toml = "0.8"
 yansi = { version = "1.0", features = ["detect-env", "detect-tty"] }
 
