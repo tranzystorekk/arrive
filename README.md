@@ -15,10 +15,10 @@ Key features and goals:
 
 Directories used (see [dirs](https://docs.rs/dirs/latest/dirs/index.html) for more info):
 
-|Description|Path                                                       |
-|-----------|-----------------------------------------------------------|
-|Cache      |`${XDG_CACHE_HOME}/arrive` or `${HOME}/.cache/arrive`      |
-|State      |`${XDG_STATE_HOME}/arrive` or `${HOME}/.local/state/arrive`|
+| Description | Path |
+| - | - |
+| Cache | `${XDG_CACHE_HOME}/arrive` or `${HOME}/.cache/arrive` |
+| State | `${XDG_STATE_HOME}/arrive` or `${HOME}/.local/state/arrive` |
 
 ## Installation
 
@@ -96,10 +96,10 @@ a valid AOC session token needs to be supplied to `arv token set`.
 To obtain such a token, do the following:
 
 1. Login to AOC: <https://adventofcode.com/auth/login>
-2. In your browser, open the developer tools
-3. Navigate to Storage -> Cookies
-4. Find and copy the entry named `session`
-5. Run `arv token set <token>`
+1. In your browser, open the developer tools
+1. Navigate to Storage -> Cookies
+1. Find and copy the entry named `session`
+1. Run `arv token set <token>`
 
 These tokens have long expiration dates,
 so you can typically set-and-forget once.
