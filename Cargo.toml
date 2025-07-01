@@ -20,7 +20,7 @@ clap = { version = "4.5", features = ["derive"] }
 clap_complete = "4.5"
 dirs = "5.0"
 eyre = "0.6"
-minreq = { version = "2.12", features = ["https"] }
+minreq = "2.14"
 serde = { version = "1.0", features = ["derive"] }
 tl = "0.7"
 toml = "0.8"
@@ -29,3 +29,8 @@ yansi = { version = "1.0", features = ["detect-env", "detect-tty"] }
 [build-dependencies]
 clap = { version = "4.5", features = ["derive"] }
 clap_complete = "4.5"
+
+[features]
+default = ["rustls-tls"]
+native-tls = ["minreq/https-native"]
+rustls-tls = ["minreq/https"]
