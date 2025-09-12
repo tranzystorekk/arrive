@@ -1,7 +1,6 @@
 [package]
 name = "arrive"
 version = "0.4.0"
-authors = ["Marcin Puc <tranzystorek.io@protonmail.com>"]
 edition = "2021"
 description = "A simple CLI tool for interacting with Advent of Code"
 repository = "https://github.com/tranzystorekk/arrive"

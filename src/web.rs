@@ -11,9 +11,8 @@ const HTTP_OK: i32 = 200;
 fn user_agent() -> String {
     let repo = env!("CARGO_PKG_REPOSITORY");
     let version = env!("CARGO_PKG_VERSION");
-    let authors = env!("CARGO_PKG_AUTHORS");
 
-    format!("{}@{} by {}", repo, version, authors)
+    format!("{}@{}", repo, version)
 }
 
 fn parse_response(response_body: &str) -> Result<String> {
