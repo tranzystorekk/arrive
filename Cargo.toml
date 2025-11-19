@@ -22,7 +22,7 @@ eyre = "0.6"
 minreq = "2.14"
 serde = { version = "1.0", features = ["derive"] }
 tl = "0.7"
-toml = "0.8"
+toml = "0.9"
 yansi = { version = "1.0", features = ["detect-env", "detect-tty"] }
 
 [build-dependencies]
