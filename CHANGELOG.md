@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.1] - 2025-11-19
+
+### Features
+
+- add native-tls feature to support system openssl installations (8c2e9ae)
+
+### Miscellaneous Tasks
+
+- **deps**: update dependencies en masse (f1e84f1)
+- **deps**: update dirs dependency to 6.0 (9c3ba9d)
+- remove authors from crate metadata (3d8a142)
+
+### Styling
+
+- **readme**: format (d10b105)
+
 ## [0.4.0] - 2024-12-14
 
 ### Features
