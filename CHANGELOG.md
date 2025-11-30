@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.2] - 2025-11-30
+
+### Bug Fixes
+
+- fix typo in error message (9656b7c)
+
+### Features
+
+- display day status grouped by year (ae68e4b)
+
 ## [0.4.1] - 2025-11-19
 
 ### Features
