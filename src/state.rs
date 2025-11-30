@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 
 use eyre::{ensure, OptionExt, Result, WrapErr};
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use yansi::Paint;
 
@@ -126,20 +127,28 @@ impl State {
 
         println!();
 
-        let mut sorted = self.days.clone();
-        sorted.sort_by_key(|d| (d.year, d.day));
+        let years = self
+            .days
+            .iter()
+            .cloned()
+            .sorted_by_key(|d| (d.year, d.day))
+            .chunk_by(|d| d.year);
 
-        for d in &sorted {
-            let symbol = match d.stage {
-                Stage::First => "__".to_string(),
-                Stage::Second => format!("{}_", "*".bold().bright_white()),
-                Stage::Complete => format!(
-                    "{}{}",
-                    "*".bold().bright_white(),
-                    "*".bold().bright_yellow()
-                ),
-            };
-            println!("{}/{:02} {}", d.year, d.day, symbol);
+        for (year, chunk) in &years {
+            println!("{}", year);
+
+            for d in chunk {
+                let symbol = match d.stage {
+                    Stage::First => "__".to_string(),
+                    Stage::Second => format!("{}_", "*".bold().bright_white()),
+                    Stage::Complete => format!(
+                        "{}{}",
+                        "*".bold().bright_white(),
+                        "*".bold().bright_yellow()
+                    ),
+                };
+                println!("     {:02} {}", d.day, symbol);
+            }
         }
     }
 
