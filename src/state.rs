@@ -59,7 +59,7 @@ impl State {
         let state_dir = paths::state_directory()?;
         std::fs::create_dir_all(&state_dir).wrap_err_with(|| {
             format!(
-                "Failed to create state direcotry structure: {}",
+                "Failed to create state directory structure: {}",
                 state_dir.display()
             )
         })?;
