@@ -20,7 +20,7 @@ clap_complete = "4.5"
 dirs = "6.0"
 eyre = "0.6"
 itertools = "0.14"
-minreq = "2.14"
+minreq = "3.0"
 serde = { version = "1.0", features = ["derive"] }
 tl = "0.7"
 toml = "0.9"
@@ -32,5 +32,5 @@ clap_complete = "4.5"
 
 [features]
 default = ["rustls-tls"]
-native-tls = ["minreq/https-native"]
-rustls-tls = ["minreq/https"]
+native-tls = ["minreq/https-native-tls"]
+rustls-tls = ["minreq/https-rustls"]

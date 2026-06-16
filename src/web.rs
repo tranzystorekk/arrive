@@ -6,7 +6,7 @@ use tl::{parse, ParserOptions};
 use crate::state::{Day, Stage, State};
 
 const AOC_BASE_URL: &str = "https://adventofcode.com";
-const HTTP_OK: i32 = 200;
+const HTTP_OK: u16 = 200;
 
 fn user_agent() -> String {
     let repo = env!("CARGO_PKG_REPOSITORY");
